@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FuzzyNavTech</title>
+  <script src="//cdn.jsdelivr.net/npm/phaser@3.12/dist/phaser.js"></script>
+  <link rel="stylesheet" href="snake.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    html,
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      scroll-behavior: smooth;
+      overflow-y:scroll;
+    }
+
+    .navbar {
+      margin: 20px;
+      border-radius: 10px;
+      position: fixed;
+      top: 0;
+      width: 98%;
+      z-index: 999;
+      background: rgba(28, 47, 99, 0.895);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .navbar:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-brand {
+      font-size: 2rem;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+      transform: scale(1.1);
+    }
+
+    .nav-link {
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #58a6ff;
+      transform: scale(1.1);
+    }
+
+    section {
+      padding: 100px 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    section:hover {
+      transform: scale(1.02);
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* .scroll-btn {
+      margin-top: 30px;
+      margin-bottom: 20px;
+      padding: 10px 25px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      background: #0072ff;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+    }
+
+    .scroll-btn:hover {
+      background-color: #005bd4;
+      transform: scale(1.05);
+    }
+
+    .scroll-btn.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    } */
+
+    @media (max-width: 768px) {
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .typewriter {
+        font-size: 1.1rem;
+      }
+    }
+
+    .social-links {
+      padding: 5px;
+      width: 560px;
+    }
+    .container {
+      background-color: #333;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      color: #f5f5f5;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .card {
+      margin-bottom: 30px;
+      background-color: #424242;
+      border: none;
+      color: #f5f5f5;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .card-title {
+      color: #ff9800;
+    }
+    .card-body h2 {
+      color: #ffeb3b;
+    }
+    hr {
+      border-color: #616161;
+    }
+    pre {
+      background-color: #616161;
+      padding: 10px;
+      border-radius: 5px;
+      font-family: 'Courier New', Courier, monospace;
+      color: #fff;
+    }
+    .card-body ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+
+  </style>
+  
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">FuzzyNavTech</a>
+      <div>
+        <a class="nav-link d-inline-block mx-2" href="index.html">Home</a>
+        <a class="nav-link d-inline-block mx-2" href="about.html">About</a>
+        <a class="nav-link d-inline-block mx-2" href="simulator.html">Simulator</a>
+        <a class="nav-link d-inline-block mx-2" href="rules.html">Rules</a>
+        <a class="nav-link d-inline-block mx-2" href="#blog">Blog</a>
+        <!-- <a class="nav-link d-inline-block mx-2" href="#contact">Contact</a>/ -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Blog Section -->
+  <section id="blog" class="bg-black text-warning text-center">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Fuzzy Logic Game Design Blogs</h2>
+      <p class="lead" data-aos="fade-up" data-aos-delay="200">Read blog posts, technical write-ups, and
+        behind-the-scenes development stories.</p>
+        <div class="card">
+            <div class="card-body">
+              <h2>Real-Time Game Design of Pac-Man Using Fuzzy Logic</h2>
+              <p><strong>Authors:</strong> Adnan Shaout, William King</p>
+              <hr>
+              <p>
+                This project presents a fuzzy logic–based AI implementation in a real-time Pac-Man game. Unlike classic rule-based ghost behavior, fuzzy logic is used to make ghost agents respond more naturally to Pac-Man's position, distance, and environment.
+              </p>
+      
+              <h3>Design Approach</h3>
+              <ul>
+                <li>Ghosts are BDI-style agents (Belief, Desire, Intention).</li>
+                <li>Fuzzy inference engines govern movement patterns and pursuit strategies.</li>
+                <li>Rules use degrees of danger, direction, and distance rather than fixed values.</li>
+              </ul>
+      
+              <h3>Example Rules</h3>
+              <pre>If DistanceToPacman is Near AND Direction is Front THEN Chase</pre>
+              <pre>If DistanceToPacman is Far AND Direction is Back THEN Patrol</pre>
+      
+              <h3>Conclusion</h3>
+              <p>
+                Integrating fuzzy logic into Pac-Man creates a more complex, immersive game environment, demonstrating how even simple AI systems benefit from soft decision-making methods.
+              </p>
+            </div>
+          </div>
+      
+          <!-- Blog 2: Maze Navigation with Fuzzy Logic -->
+          <div class="card">
+            <div class="card-body">
+              <h2>Fuzzy Control for Maze-Solving Robot</h2>
+              <p><strong>Author:</strong> Cheng Guoyi</p>
+              <hr>
+              <p>
+                This project implements a fuzzy controller to navigate a two-wheeled robot through a maze. The goal is to replace traditional PID control with a flexible fuzzy system that adapts to real-world uncertainty.
+              </p>
+      
+              <h3>Robot Setup</h3>
+              <ul>
+                <li>Robot has left and right wheel motors.</li>
+                <li>Distance sensors detect proximity to walls.</li>
+                <li>Control system adjusts wheel speed to avoid obstacles and stay centered.</li>
+              </ul>
+      
+              <h3>Fuzzy Rules</h3>
+              <pre>If LeftSensor is Close AND RightSensor is Far THEN Turn Right</pre>
+              <pre>If BothSensors are Close THEN Move Backward</pre>
+      
+              <h3>Results</h3>
+              <p>
+                The robot successfully navigated mazes with varying widths. The fuzzy system smoothly transitioned through corners and avoided sharp turns better than hard-coded logic.
+              </p>
+      
+              <h3>Conclusion</h3>
+              <p>
+                Fuzzy logic allows better handling of uncertainties and makes robotic systems more adaptable in unstructured environments like mazes.
+              </p>
+            </div>
+          </div>
+      
+          <!-- Blog 3: FuzzySense Runner – Reactive AI -->
+          <div class="card">
+            <div class="card-body">
+              <h2>FuzzySense Runner – Interactive AI with Fuzzy Logic</h2>
+              <p><strong>Source:</strong> ResearchGate Study</p>
+              <hr>
+              <p>
+                The FuzzySense Runner is inspired by robotics projects that use fuzzy controllers to enhance decision-making in interactive scenarios. The study demonstrates fuzzy AI applied to a robot that reacts based on power level, distance to enemies, and sensory data.
+              </p>
+      
+              <h3>AI Logic</h3>
+              <ul>
+                <li>Battery levels influence speed and risk-taking.</li>
+                <li>Proximity sensors influence dodging vs running.</li>
+                <li>Rules ensure the robot adapts rather than follows hard commands.</li>
+              </ul>
+      
+              <h3>Example Rule</h3>
+              <pre>If Battery is Low AND ObstacleDistance is Close THEN Stop and Recharge</pre>
+      
+              <h3>Use Case</h3>
+              <p>
+                Robots controlled by fuzzy systems are more responsive and less brittle. Games using such models can simulate more realistic, lifelike AI.
+              </p>
+      
+              <h3>Conclusion</h3>
+              <p>
+                FuzzySense Runner showcases how fuzzy logic makes decision-making smooth and continuous, ideal for games where player unpredictability is high.
+              </p>
+            </div>
+          </div>
+      
+          <!-- Blog 4: Fuzzy Robot Navigation in Dynamic Environments -->
+          <div class="card">
+            <div class="card-body">
+              <h2>Fuzzy Logic for Dynamic Robot Navigation</h2>
+              <p><strong>Author:</strong> Dr. Amelia Hawke</p>
+              <hr>
+              <p>
+                This article delves into the dynamic challenges faced by mobile robots navigating unpredictable environments, such as busy city streets. By applying fuzzy logic, robots can make real-time decisions that allow them to better adapt to environmental changes such as unexpected obstacles, changes in traffic, or sudden shifts in weather conditions.
+              </p>
+      
+              <h3>Key Features of the System</h3>
+              <ul>
+                <li>Adaptive decision-making based on sensory feedback.</li>
+                <li>Fuzzy logic enables continuous re-evaluation of obstacles.</li>
+                <li>Real-time adjustments made for speed and navigation paths.</li>
+              </ul>
+      
+              <h3>Results</h3>
+              <p>
+                The fuzzy control system outperformed conventional methods in real-world environments, where sensors often provide imprecise or noisy data. The robot was able to maintain smoother, more efficient paths even in uncertain and rapidly changing conditions.
+              </p>
+      
+              <h3>Conclusion</h3>
+              <p>
+                Fuzzy logic enhances robot navigation by adding an adaptive layer that mimics human decision-making, improving robot autonomy and safety in dynamic environments.
+              </p>
+            </div>
+          </div>
+      
+          <!-- Blog 5: Real-Time Fuzzy Logic for Autonomous Vehicles -->
+          <div class="card">
+            <div class="card-body">
+              <h2>Real-Time Fuzzy Logic for Autonomous Vehicles</h2>
+              <p><strong>Author:</strong> Dr. Mark Thompson</p>
+              <hr>
+              <p>
+                This research explores how fuzzy logic is applied to autonomous vehicles for real-time decision-making. Fuzzy controllers help manage uncertain road conditions, unexpected obstacles, and interactions with other vehicles. The system integrates sensor data to determine vehicle speed, braking force, and steering adjustments.
+              </p>
+      
+              <h3>System Features</h3>
+              <ul>
+                <li>Real-time sensor data interpretation (e.g., LIDAR, cameras).</li>
+                <li>Dynamic decision-making under various driving conditions.</li>
+                <li>Safety systems that adapt to road environments like traffic congestion, accidents, or weather changes.</li>
+              </ul>
+      
+              <h3>Results</h3>
+              <p>
+                The fuzzy logic system was able to successfully navigate complex driving scenarios, such as sudden lane changes or unexpected obstacles, without requiring pre-programmed responses.
+              </p>
+      
+              <h3>Conclusion</h3>
+              <p>
+                Fuzzy logic contributes to the development of safer and more flexible autonomous driving systems by providing real-time adaptability, crucial for unpredictable driving environments.
+              </p>
+            </div>
+          </div>
+      
+    </div>
+  </section>
+
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

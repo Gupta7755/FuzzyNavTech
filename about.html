@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FuzzyNavTech</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.12/dist/phaser.js"></script>
+    <link rel="stylesheet" href="snake.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        html,
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: black;
+            color: white;
+            scroll-behavior: smooth;
+        }
+
+        .navbar {
+            margin: 20px;
+            border-radius: 10px;
+            position: fixed;
+            top: 0;
+            width: 98%;
+            z-index: 999;
+            background: rgba(28, 47, 99, 0.895);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .navbar:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #58a6ff;
+            transform: scale(1.1);
+        }
+
+        section {
+            padding: 100px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        section:hover {
+            transform: scale(1.02);
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tree-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circle-layout {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        svg {
+            /* position: absolute; */
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .arrow {
+            stroke: #ff5722;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+
+        .center-node {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140px;
+            height: 140px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            background-color: #222;
+            z-index: 2;
+        }
+
+        .center-node img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .node {
+            position: absolute;
+            width: 180px;
+            height: 50px;
+            background: #d84315;
+            color: #fff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(255, 87, 34, 0.6);
+            transition: 0.3s;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .node:hover {
+            background: #ff5722;
+            cursor: pointer;
+            position: block;
+            /* align-items: center; */
+        }
+
+        .node_A {
+            position: absolute;
+            width: 180px;
+            height: 50px;
+            background: #1f15d8;
+            color: #fff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(13, 13, 224, 0.6);
+            transition: 0.3s;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .node_A:hover {
+            background: #1f15d8;
+            cursor: pointer;
+        }
+
+        .node_B {
+            position: absolute;
+            width: 180px;
+            height: 50px;
+            background: #0cbf30;
+            color: #fff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(127, 249, 27, 0.6);
+            transition: 0.3s;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .node_B:hover {
+            background: #0eb32f;
+            cursor: pointer;
+        }
+
+        .node_C {
+            position: absolute;
+            width: 180px;
+            height: 50px;
+            background: #b4ba17;
+            color: #fff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(232, 235, 32, 0.6);
+            transition: 0.3s;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .node_C:hover {
+            background: #b4ba17;
+            cursor: pointer;
+        }
+
+        .node_D {
+            position: absolute;
+            width: 180px;
+            height: 50px;
+            background: #6c0ccb;
+            color: #fff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(132, 15, 241, 0.918);
+            transition: 0.3s;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .node_D:hover {
+            background: #6c0ccb;
+            cursor: pointer;
+        }
+
+        .node_E {
+            position: absolute;
+            width: 180px;
+            height: 50px;
+            background: #e20d0d;
+            color: #fff;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(241, 15, 15, 0.918);
+            transition: 0.3s;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .node_E:hover {
+            background: #cb0c0c;
+            cursor: pointer;
+        }
+
+
+
+        .node1 {
+            top: 25%;
+            left: 35%;
+            transform: translate(-50%, 30%);
+        }
+
+        .node2 {
+            top: 25%;
+            right: 35%;
+            transform: translate(50%, 30%);
+        }
+
+        /* .node3 {
+            top: 50%;
+            left: 120%;
+            transform: translate(-100%, -50%);
+        } */
+
+        .node3 {
+            bottom: 30%;
+            right: 20%;
+            transform: translate(50%, -30%);
+        }
+
+        .node4 {
+            bottom: 20%;
+            left: 50%;
+            transform: translate(-50%, -30%);
+        }
+
+        .node5 {
+            bottom: 30%;
+            left: 20%;
+            transform: translate(-50%, 30%);
+        }
+
+        /* .node7 {
+            top: 48%;
+            left: -8%;
+            transform: translate(-50%, -50%);
+        } */
+
+        .node6 {
+            top: 14%;
+            left: 40%;
+            transform: translate(-50%, -10%);
+        }
+
+        .node7 {
+            top: 15%;
+            left: 23%;
+            transform: translate(-50%, 0%);
+        }
+
+        .node8 {
+            top: 23%;
+            left: 20%;
+            transform: translate(-80%, -35%);
+        }
+
+        .node9 {
+            top: 30%;
+            left: 20%;
+            transform: translate(-80%, 77%);
+        }
+
+        .node10 {
+            top: 45%;
+            left: 25%;
+            transform: translate(-70%, -10%);
+        }
+
+        .node11 {
+            top: 8%;
+            left: 30%;
+            transform: translate(-50%, -10%);
+        }
+
+        .node12 {
+            top: 14%;
+            right: 44%;
+            transform: translate(100%, -10%);
+        }
+
+        .node13 {
+            top: 18%;
+            right: 23%;
+            transform: translate(80%, 5%);
+        }
+
+        .node14 {
+            top: 33%;
+            right: 25%;
+            transform: translate(90%, 40%);
+        }
+
+        .node15 {
+            top: 7%;
+            right: 30%;
+            transform: translate(80%, 5%);
+        }
+
+        .node16 {
+            bottom: 50%;
+            right: 15%;
+            transform: translate(50%, 20%);
+        }
+
+        .node17 {
+            bottom: 40%;
+            right: 5%;
+            transform: translate(30%, 0%);
+        }
+
+        .node18 {
+            bottom: 25%;
+            right: 5%;
+            transform: translate(35%, 0);
+        }
+
+        .node19 {
+            bottom: 15%;
+            right: 10%;
+            transform: translate(30%, -50%);
+        }
+
+        .node20 {
+            bottom: 10%;
+            right: 20%;
+            transform: translate(40%, 0%);
+        }
+
+        .node21 {
+            bottom: 43%;
+            left: 15%;
+            transform: translate(-40%, 0);
+        }
+
+        .node22 {
+            bottom: 37%;
+            left: 10%;
+            transform: translate(-70%, 0);
+            ;
+        }
+
+        .node23 {
+            bottom: 20%;
+            left: 10%;
+            transform: translate(-70%, 0);
+        }
+
+        .node24 {
+            bottom: 13%;
+            left: 13%;
+            transform: translate(0%, 0);
+        }
+
+        .node25 {
+            bottom: 6%;
+            left: 20%;
+            transform: translate(0%, 0);
+        }
+
+        .node26 {
+            bottom: 3%;
+            left: 33%;
+            transform: translate(0%, 0);
+        }
+
+        .node27 {
+            bottom: 0%;
+            left: 45%;
+            transform: translate(0%, 0);
+        }
+
+        .node28 {
+            bottom: 3%;
+            left: 60%;
+            transform: translate(0%, 0);
+        }
+
+
+        .hover-page {
+            position: absolute;
+            min-width: 300px;
+            max-width: 500px;
+            white-space: normal;
+            padding: 10px;
+            background-color: #212121;
+            color: white;
+            border: 1px solid #0f0202;
+            box-shadow: 0 2px 8px rgba(8, 1, 1, 0.852);
+            z-index: 99999;
+            border-radius: 5px;
+            pointer-events: none;
+            /* Ensures that the tooltip won't block any clicks */
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">FuzzyNavTech</a>
+            <div>
+                <a class="nav-link d-inline-block mx-2" href="index.html">Home</a>
+                <a class="nav-link d-inline-block mx-2" href="#about">About</a>
+                <a class="nav-link d-inline-block mx-2" href="simulator.html">Simulator</a>
+                <a class="nav-link d-inline-block mx-2" href="rules.html">Rules</a>
+                <a class="nav-link d-inline-block mx-2" href="#blog">Blog</a>
+                <!-- <a class="nav-link d-inline-block mx-2" href="#contact">Contact</a> -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Section -->
+    <section id="about" class="bg-dark text-dark text-center">
+        <div class="tree-container">
+
+            <div class="circle-layout">
+
+                <!-- node 1.Core Concepts-->
+                <div class="node_A node6" data-tooltip="This is the process of converting crisp sensor input (like distance or speed) into fuzzy values using membership functions. For example, a distance of 15cm might be considered “Close” to some degree and “Far” to another.">Fuzzification</div>
+                <div class="node_A node7" data-tooltip="A collection of IF-THEN rules that express expert knowledge.<br> Example:
+                <strong>IF distance is Close AND battery is High THEN speed is Slow.</strong><br>
+                Rules guide the robot's behavior based on fuzzy input.">Rule Base</div>
+                <div class="node_A node8" data-tooltip="The brain of the system that processes fuzzy inputs through the rule base and determines which rules to fire and how strongly. It uses fuzzy logic operators (AND, OR, NOT) to reason.">Inference Engine</div>
+                <div class="node_A node9"data-tooltip="The process of converting fuzzy output values back into crisp actions (e.g., turn angle = 30°, speed = 5 m/s). Common methods include Centroid and Mean of Maximum.">Defuzzification</div>
+                <div class="node_A node10"data-tooltip="Graphs that define how input values map to fuzzy sets. For example, a triangular function might define when a distance is considered 'Close' or 'Far'.">Membership Functions</div>
+                <div class="node_A node11"data-tooltip="Variables described in human language (e.g., “Speed” can be Slow, Medium, Fast). These enhance interpretability and are essential in making the system understandable and tunable.">Linguistic Variables</div>
+
+                <!-- node of Advanced concept-->
+                <div class="node_B node12"data-tooltip="Hybrid systems that combine neural networks with fuzzy logic. They learn and adapt fuzzy rules automatically through training data."> Neuro-Fuzzy Systems</div>
+                <div class="node_B node13"data-tooltip="Use fuzzy logic to tune PID parameters in real-time, improving performance in nonlinear or time-varying systems.">Fuzzy PID Controllers</div>
+                <div class="node_B node14"data-tooltip="Systems that can evolve their rule base on the fly using machine learning, improving efficiency and adaptability.">Adaptive Rule Generation</div>
+                <div class="node_B node15"data-tooltip="Multiple robots using fuzzy logic to collaboratively navigate environments, avoid collisions, and achieve group goals.">Multi-Agent Navigation</div>
+
+                <!-- node of Application-->
+                <div class="node_C node16"data-tooltip="Fuzzy logic handles ambiguous driving conditions like “moderately heavy traffic” or “slippery roads,” enabling smoother decision-making.">Autonomous Cars</div>
+                <div class="node_C node17"data-tooltip="Used in assembly lines for adaptive speed, object handling, and reacting to unexpected input or placement.">Industrial Robots</div>
+                <div class="node_C node18"data-tooltip="Fuzzy logic decides when to turn, how fast to move, and which areas need more cleaning based on dirt level or proximity to obstacles.">Smart Vacuums</div>
+                <div class="node_C node19"data-tooltip="Controls hovering stability, obstacle avoidance, and landing procedures using inputs like tilt, distance, and battery level.">Drones</div>
+                <div class="node_C node20"data-tooltip="Implements fuzzy rules like “IF ghost is near THEN turn away slowly” or “IF pill is visible AND ghost is far THEN chase pill.” Adds unpredictability and human-like behavior in AI.">Pac-Man & Maze Games</div>
+
+                <!-- node of Sensors & Mapping-->
+                <div class="node_D node21"data-tooltip="Detect how close an object is to the robot. Inputs are fuzzified into categories like “Near,” “Medium,” and “Far.”">Distance Sensors (Ultrasonic, IR)</div>
+                <div class="node_D node22"data-tooltip="Monitor energy levels to influence robot behavior. For instance, if power is “Low,” the robot may switch to power-saving navigation.">Power/Battery Sensors</div>
+                <div class="node_D node23"data-tooltip="Used to avoid collisions. Fuzzy logic decides turn angles or stop signals based on the perceived closeness of objects.">Obstacle Detection</div>
+                <div class="node_D node24"data-tooltip="Sensors or image processors that identify goals like exits, items, or charging stations and guide robot movement toward them.">Target Locators</div>
+                <div class="node_D node25"data-tooltip="Integrates various data (light, noise, heat, etc.) into fuzzy logic to adapt behavior—for example, slowing down in low visibility.">Environmental Awareness</div>
+
+                <!-- node of Types of Systems-->
+                <div class="node_E node26"data-tooltip="Uses fuzzy sets in both inputs and outputs. It’s intuitive, readable, and often used for control applications like robotic navigation.">Mamdani System</div>
+                <div class="node_E node27"data-tooltip="Outputs are linear functions or constants. More efficient and suitable for adaptive systems like neural networks.">Sugeno System</div>
+                <div class="node_E node28"data-tooltip="Each rule has a monotonically increasing or decreasing output function. Known for its clear rule-consequence relationship and precision.">Tsukamoto System</div>
+
+                <!-- Center Node -->
+                <div class="center-node" data-tooltip="Fuzzy logic is a decision-making system that allows robots to handle uncertain or imprecise situations—just like humans do. In robotic navigation, this means a robot doesn’t need exact rules like “if distance = 10cm, then stop.” Instead, it can think in flexible terms such as “if distance is close” or “if battery is low,” where words like close, far, low, and high are fuzzy terms with degrees of truth. Using fuzzy logic, robots can smoothly adjust their movements based on real-world sensor inputs that are often noisy or unpredictable. For example, in a maze or a Pac-Man–like game, a robot might use fuzzy logic to decide whether to turn left or right based on how close walls are, where threats are coming from, or which direction the goal is in. This approach enables smoother, more adaptive navigation in complex environments, bridging the gap between rigid programming and real-life flexibility.">
+                    <img src="/assests/fuzzy.jpg" alt="Fuzzy Logic" />
+                </div>
+                <div id="hoverTooltip" class="hover-page" style="display: none;"></div>
+                <!-- SVG Arrows -->
+                <svg viewBox="0 0 100% 100%">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#ff5722" />
+                        </marker>
+                    </defs>
+
+                    <!-- Lines from center (300,300) to each node -->
+                    <line x1="50%" y1="50%" x2="35%" y2="32%" class="arrow" />
+                    <line x1="50%" y1="50%" x2="65%" y2="32%" class="arrow" />
+                    <line x1="50%" y1="50%" x2="80%" y2="63%" class="arrow" />
+                    <line x1="50%" y1="50%" x2="50%" y2="73%" class="arrow" />
+                    <line x1="50%" y1="50%" x2="20%" y2="66%" class="arrow" />
+
+                    <!-- Core Concepts to Blue -->
+                    <line x1="35%" y1="30%" x2="40%" y2="19%" class="arrow" />
+                    <line x1="35%" y1="30%" x2="25%" y2="20%" class="arrow" />
+                    <line x1="35%" y1="30%" x2="22%" y2="24%" class="arrow" />
+                    <line x1="35%" y1="30%" x2="21%" y2="34%" class="arrow" />
+                    <line x1="35%" y1="30%" x2="30%" y2="13%" class="arrow" />
+                    <line x1="35%" y1="30%" x2="22%" y2="44%" class="arrow" />
+
+                    <!-- Advanced Concepts to Green -->
+                    <line x1="70%" y1="30%" x2="60%" y2="19%" class="arrow" />
+                    <line x1="70%" y1="30%" x2="75%" y2="12%" class="arrow" />
+                    <line x1="70%" y1="30%" x2="80%" y2="24%" class="arrow" />
+                    <line x1="70%" y1="30%" x2="80%" y2="35%" class="arrow" />
+
+                    <!-- Applications to Yellow -->
+                    <line x1="79%" y1="65%" x2="85%" y2="51%" class="arrow" />
+                    <line x1="79%" y1="65%" x2="90%" y2="60%" class="arrow" />
+                    <line x1="79%" y1="65%" x2="95%" y2="70%" class="arrow" />
+                    <line x1="79%" y1="65%" x2="90%" y2="77%" class="arrow" />
+                    <line x1="79%" y1="65%" x2="80%" y2="85%" class="arrow" />
+
+                    <!-- Types of Systems to Red -->
+                    <line x1="48%" y1="74%" x2="42%" y2="92%" class="arrow" />
+                    <line x1="48%" y1="74%" x2="50%" y2="95%" class="arrow" />
+                    <line x1="48%" y1="74%" x2="63%" y2="92%" class="arrow" />
+
+                    <!-- Sensors & Mapping to Purple -->
+                    <line x1="20%" y1="68%" x2="18%" y2="57%" class="arrow" />
+                    <line x1="20%" y1="68%" x2="9%" y2="63%" class="arrow" />
+                    <line x1="20%" y1="68%" x2="9%" y2="75%" class="arrow" />
+                    <line x1="20%" y1="68%" x2="20%" y2="82%" class="arrow" />
+                    <line x1="20%" y1="68%" x2="25%" y2="89%" class="arrow" />
+                </svg>
+
+                <!-- Center Node -->
+                <!-- <div class="center-node">
+                    <img src="/assests/fuzzy.jpg" alt="Fuzzy Logic" />
+                </div> -->
+
+
+
+                <!-- Child Nodes -->
+                <div class="node node1">1. Core Concepts</div>
+                <div class="node node2">2. Advanced Concepts</div>
+                <div class="node node3">3. Applications</div>
+                <div class="node node4">4. Types of Systems</div>
+                <div class="node node5">5. Sensors & Mapping</div>
+
+
+            </div>
+        </div>
+
+    </section>
+    <script>
+        const tooltip = document.getElementById('hoverTooltip');
+    
+        // Select all elements with class starting with "node_"
+        document.querySelectorAll('.node_A, .node_B, .node_C, .node_D, .node_E, .center-node').forEach(node => {
+            node.addEventListener('mouseenter', (e) => {
+                const text = node.getAttribute('data-tooltip');
+                tooltip.innerHTML = text;
+    
+                const rect = node.getBoundingClientRect();
+                tooltip.style.left = `${rect.left}px`;
+                tooltip.style.top = `${rect.bottom + 5}px`;
+                tooltip.style.display = 'block';
+            });
+    
+            node.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+        });
+    </script>
+    
+
+</body>
+
+</html>

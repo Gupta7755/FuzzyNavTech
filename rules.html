@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FuzzyNavTech</title>
+  <script src="//cdn.jsdelivr.net/npm/phaser@3.12/dist/phaser.js"></script>
+  <link rel="stylesheet" href="snake.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    html,
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      scroll-behavior: smooth;
+    }
+
+    .navbar {
+      margin: 20px;
+      border-radius: 10px;
+      position: fixed;
+      top: 0;
+      width: 98%;
+      z-index: 999;
+      background: rgba(28, 47, 99, 0.895);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .navbar:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-brand {
+      font-size: 2rem;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+      transform: scale(1.1);
+    }
+
+    .nav-link {
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #58a6ff;
+      transform: scale(1.1);
+    }
+
+    section {
+      padding: 100px 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    section:hover {
+      transform: scale(1.02);
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .game-section {
+      background: #280ed5;
+      padding: 1.5rem;
+      flex: 1 1 30%;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      min-width: 300px;
+      max-width: 400px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .game-section:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 1rem;
+      border-radius: 5px;
+      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: auto;
+
+    }
+
+    code {
+      font-family: Consolas, monospace;
+    }
+
+    @media (max-width: 900px) {
+      .card-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* Modal Styling */
+    .modal {
+      display: none;
+      position: block;
+      top: 7%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .modal-content {
+      background: #2834c2;
+      padding: 2rem;
+      max-width: 95vw;
+      width: 100%;
+      height: 100vh;
+      border-radius: 10px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #555;
+    }
+
+    .close-btn:hover {
+      color: red;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">FuzzyNavTech</a>
+      <div>
+        <a class="nav-link d-inline-block mx-2" href="index.html">Home</a>
+        <a class="nav-link d-inline-block mx-2" href="about.html">About</a>
+        <a class="nav-link d-inline-block mx-2" href="simulator.html">Simulator</a>
+        <a class="nav-link d-inline-block mx-2" href="#rules">Rules</a>
+        <a class="nav-link d-inline-block mx-2" href="blog.html">Blog</a>
+        <!-- <a class="nav-link d-inline-block mx-2" href="#contact">Contact</a> -->
+      </div>
+    </div>
+  </nav>
+  <!-- Rules Section -->
+  <section id="rules" class="bg-dark text-white text-center">
+    <div class="container">
+      <h2 class="section-title" data-aos="zoom-in">Fuzzy Rule Editor</h2>
+      <p class="lead" data-aos="fade-up" data-aos-delay="200">Modify fuzzy rules like "IF front is near THEN turn left"
+        directly in the browser.</p>
+      <div class="card-container">
+        <div class="game-section" onclick="openModal('pacmanModal')">
+          <h2>🟡 Pac-Man</h2>
+          <p><strong>Goal:</strong> Avoid ghosts or chase them when frightened.</p>
+          <p><strong>Theory:</strong> Uses fuzzy logic to respond to ghosts dynamically. Pac-Man doesn’t just run away
+            when a ghost is near—it considers how close the ghost is, its current mode, and adjusts behavior
+            accordingly.</p>
+          <p><strong>Rule:</strong> IF ghost is Close AND mode is Chase → Move Away</p>
+          <pre><code>// Fuzzy decision-making for Pac-Man
+  function fuzzyPacmanMove(ghostDistance, ghostMode) {
+    if (ghostDistance < 3) {
+      if (ghostMode === "chase") return "move_away";
+      if (ghostMode === "frightened") return "move_toward";
+    } else if (ghostDistance < 6) {
+      return "move_random";
+    } else {
+      return "move_toward_pellet";
+    }
+  }</code></pre>
+        </div>
+
+        <!-- Maze and Snake (no modal for now) -->
+        <div class="game-section" onclick="openModal('mazeModal')">
+          <h2>🧩 Maze</h2>
+          <p><strong>Goal:</strong> Navigate around walls to reach the destination.</p>
+          <p><strong>Theory:</strong> Fuzzy logic in mazes allows agents to consider wall proximity and angle to the
+            target. This makes movement smoother and more adaptive compared to traditional shortest path algorithms
+            alone.</p>
+          <p><strong>Fuzzy Rule:</strong> IF front is Near → Turn Left or Right</p>
+          <pre><code>// Fuzzy decision-making for maze navigation
+  function fuzzyMazeMove(frontDist, leftDist, rightDist, goalAngle) {
+    if (frontDist < 2) {
+      return (leftDist > rightDist) ? "turn_left" : "turn_right";
+    } else if (Math.abs(goalAngle) < 15) {
+      return "go_forward";
+    } else if (goalAngle < 0) {
+      return "turn_left";
+    } else {
+      return "turn_right";
+    }
+  }</code></pre>
+        </div>
+
+        <div class="game-section" onclick="openModal('snakeModal')">
+          <h2>🐍 Snake</h2>
+          <p><strong>Goal:</strong> Eat food while avoiding walls or itself.</p>
+          <p><strong>Theory:</strong> Fuzzy logic in snake enables smoother decisions based on food location and wall
+            distances. This makes the AI less prone to sharp turns and more natural in its pursuit of food.</p>
+          <p><strong>Fuzzy Rule:</strong> IF food is ahead AND wall is Far → Go Forward</p>
+          <pre><code>// Fuzzy decision-making for Snake game
+  function fuzzySnakeMove(foodX, foodY, wallFront, wallLeft, wallRight) {
+    if (wallFront < 1) {
+      return (wallLeft > wallRight) ? "turn_left" : "turn_right";
+    } else if (Math.abs(foodX) < 1 && foodY < 0) {
+      return "go_forward";
+    } else if (foodX < 0) {
+      return "turn_left";
+    } else {
+      return "turn_right";
+    }
+  }</code></pre>
+        </div>
+      </div>
+
+      <!-- Modal for Pac-Man -->
+      <div class="modal" id="pacmanModal">
+        <div class="modal-content">
+          <span class="close-btn" onclick="closeModal()">&times;</span>
+          <h2>🟡 Pac-Man: Fuzzy Logic Navigation</h2>
+          <p><strong>Goal:</strong> Avoid ghosts or chase them when frightened.</p>
+          <p><strong>Theory:</strong> In Pac-Man, fuzzy logic helps decide movements based on ghost proximity and
+            their state (chase, frightened, scatter). Instead of using hard-coded behavior, Pac-Man adapts its path
+            smoothly depending on how close the threat is and whether it's an opportunity to earn points by eating
+            the ghost.</p>
+          <p><strong>Fuzzy Rules:</strong></p>
+          <ul>
+            <li>IF ghost is Close AND mode is Chase → Move Away</li>
+            <li>IF ghost is Close AND mode is Frightened → Move Toward</li>
+            <li>IF ghost is Medium Distance → Move Random</li>
+            <li>IF ghost is Far → Move Toward Pellet</li>
+          </ul>
+          <pre><code>// Fuzzy decision-making for Pac-Man
+  function fuzzyPacmanMove(ghostDistance, ghostMode) {
+    if (ghostDistance < 3) {
+      if (ghostMode === "chase") return "move_away";
+      if (ghostMode === "frightened") return "move_toward";
+    } else if (ghostDistance < 6) {
+      return "move_random";
+    } else {
+      return "move_toward_pellet";
+    }
+  }
+  // Ghost logic to detect and follow Pac-Man using a grid-based environment
+  // Assumes ghost and Pac-Man positions are known on a 2D grid (maze)
+  
+  // Function to move ghost toward Pac-Man intelligently
+  function moveGhost(ghost, pacman, mazeGrid) {
+    // Calculate difference in position
+    const dx = pacman.x - ghost.x;
+    const dy = pacman.y - ghost.y;
+  
+    // Priority direction list - determines which direction ghost prefers
+    const directions = [];
+  
+    // Choose major direction first (the one with the larger distance)
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) directions.push("right");
+      else directions.push("left");
+  
+      if (dy > 0) directions.push("down");
+      else directions.push("up");
+    } else {
+      if (dy > 0) directions.push("down");
+      else directions.push("up");
+  
+      if (dx > 0) directions.push("right");
+      else directions.push("left");
+    }
+  
+    // Try to move in one of the prioritized directions
+    for (let dir of directions) {
+      const [nx, ny] = getNextTile(ghost.x, ghost.y, dir);
+  
+      // Check if the tile is walkable (not a wall)
+      if (mazeGrid[ny] && mazeGrid[ny][nx] !== 1) {
+        // Update ghost position
+        ghost.x = nx;
+        ghost.y = ny;
+        ghost.direction = dir;
+        return;
+      }
+    }
+  
+    // If blocked in all directions, ghost stays in place
+    ghost.direction = "stay";
+  }
+  
+  // Helper function to compute next tile based on direction
+  function getNextTile(x, y, direction) {
+    switch (direction) {
+      case "up": return [x, y - 1];
+      case "down": return [x, y + 1];
+      case "left": return [x - 1, y];
+      case "right": return [x + 1, y];
+      default: return [x, y];
+    }
+  }
+  // Define the ghost's initial position and direction
+  const ghost = { x: 5, y: 8, direction: "left" };
+  
+  // Define Pac-Man's initial position
+  const pacman = { x: 10, y: 4 };
+  
+  // Define the maze grid
+  // 1 = Wall (impassable), 2 = Path (walkable), 0 = Empty space (open area)
+  let map = [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+      [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+      [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+      [1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1],
+      [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
+      [1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1],
+      [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1],
+      [1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1],
+      [0, 0, 0, 0, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+      [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+      [1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1],
+      [1, 1, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 1, 1],
+      [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
+      [1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  ];
+  
+  // Function to move the ghost towards Pac-Man (the logic for movement)
+  function moveGhost(ghost, pacman, mazeGrid) {
+    // Calculate the difference in position between Pac-Man and the ghost
+    const dx = pacman.x - ghost.x;
+    const dy = pacman.y - ghost.y;
+    
+    // Move ghost based on the x-direction first (left or right)
+    if (dx > 0) {
+      ghost.x += 1;  // Move right
+    } else if (dx < 0) {
+      ghost.x -= 1;  // Move left
+    }
+  
+    // Then move the ghost in the y-direction (up or down)
+    if (dy > 0) {
+      ghost.y += 1;  // Move down
+    } else if (dy < 0) {
+      ghost.y -= 1;  // Move up
+    }
+  
+    // Check if the ghost collides with a wall after the movement
+    if (mazeGrid[ghost.y][ghost.x] === 1) {
+      // If there's a wall, undo the last move
+      if (dx > 0) {
+        ghost.x -= 1;  // Undo moving right
+      } else if (dx < 0) {
+        ghost.x += 1;  // Undo moving left
+      }
+  
+      if (dy > 0) {
+        ghost.y -= 1;  // Undo moving down
+      } else if (dy < 0) {
+        ghost.y += 1;  // Undo moving up
+      }
+    }
+  
+    // Output ghost's position after the movement
+    console.log(`Ghost's new position: x = ${ghost.x}, y = ${ghost.y}`);
+  }
+  
+  // Call the movement function in the game loop
+  moveGhost(ghost, pacman, mazeGrid);  // Ghost moves towards Pac-Man
+  </code></pre>
+        </div>
+      </div>
+      <!-- Modal for Maze -->
+      <div class="modal" id="mazeModal">
+        <div class="modal-content">
+          <span class="close-btn" onclick="closeModal()">&times;</span>
+          <h2>🧩 Maze: Fuzzy Logic Navigation</h2>
+          <p><strong>Goal:</strong> Navigate around walls to reach the destination.</p>
+          <p><strong>Theory:</strong> Fuzzy logic is a form of reasoning that helps agents make decisions when there
+            is uncertainty or imprecision. In maze navigation, fuzzy logic helps the agent decide which direction to
+            take when faced with obstacles, such as walls, and how to move towards the goal efficiently. By using
+            fuzzy rules based on the proximity to walls, the agent can smoothly navigate through a maze instead of
+            relying on rigid, pre-programmed paths.</p>
+          <p><strong>How It Works:</strong> The agent's movement is based on sensory inputs that detect the distance
+            from obstacles and the angle to the goal. Fuzzy logic allows the agent to consider multiple inputs
+            simultaneously, such as the distance to walls in different directions and the angle to the goal. It then
+            makes decisions like turning left or right, going forward, or stopping to avoid dead-ends.</p>
+          <p><strong>Fuzzy Logic in Action:</strong></p>
+          <ul>
+            <li>Fuzzy logic takes into account multiple variables, such as the distance to the front, left, right,
+              and goal angle, which influence the agent's next move.</li>
+            <li>Based on proximity to obstacles and goal position, fuzzy logic generates commands like turning,
+              moving forward, or stopping.</li>
+            <li>The agent can also prioritize certain directions depending on the environment, dynamically adapting
+              its behavior as it moves.</li>
+          </ul>
+          <p><strong>Fuzzy Rules:</strong></p>
+          <ul>
+            <li>IF front is Near → Turn Left or Right</li>
+            <li>IF goal is Ahead AND Angle is Small → Go Forward</li>
+            <li>IF goal is to the Left → Turn Left</li>
+            <li>IF goal is to the Right → Turn Right</li>
+            <li>IF front is Clear AND Goal is Ahead → Move Towards Goal</li>
+            <li>IF there's a Dead-End → Reverse or Turn Around</li>
+            <li>IF wall is too Close → Stop and Recalculate Path</li>
+          </ul>
+          <pre><code>
+          // Fuzzy decision-making for maze navigation with auto pathfinding
+          function fuzzyMazeMove(frontDist, leftDist, rightDist, goalAngle, mazeGrid, agentPosition, goalPosition) {
+            // Pathfinding using A* to find the best path
+            const path = findPathAStar(mazeGrid, agentPosition, goalPosition);
+          
+            if (path.length > 0) {
+              // If a path is found, move towards the next point
+              const nextMove = getDirectionToNextPoint(agentPosition, path[0]);
+              return nextMove;
+            } else {
+              // If no path is found, use fuzzy logic for navigation
+              if (frontDist < 2) {
+                return (leftDist > rightDist) ? "turn_left" : "turn_right";
+              } else if (Math.abs(goalAngle) < 15) {
+                return "go_forward";
+              } else if (goalAngle < 0) {
+                return "turn_left";
+              } else {
+                return "turn_right";
+              }
+            }
+          }
+          
+          // A* Pathfinding Algorithm
+          function findPathAStar(mazeGrid, start, goal) {
+            const openList = [start]; // List of nodes to be evaluated
+            const closedList = []; // List of nodes already evaluated
+            const cameFrom = {}; // Keeps track of the path
+          
+            // Costs of moving through each node
+            const gScore = {}; // Cost from start to current node
+            const fScore = {}; // Estimated total cost (g + h)
+          
+            // Initialize scores
+            gScore[`${start.x},${start.y}`] = 0;
+            fScore[`${start.x},${start.y}`] = heuristic(start, goal);
+          
+            while (openList.length > 0) {
+              // Find the node with the lowest fScore
+              let current = openList.reduce((lowest, node) => 
+                fScore[`${node.x},${node.y}`] < fScore[`${lowest.x},${lowest.y}`] ? node : lowest, openList[0]);
+          
+              // If the goal is reached
+              if (current.x === goal.x && current.y === goal.y) {
+                return reconstructPath(cameFrom, current);
+              }
+          
+              // Remove current from openList and add to closedList
+              openList.splice(openList.indexOf(current), 1);
+              closedList.push(current);
+          
+              // Check neighboring nodes
+              const neighbors = getNeighbors(current, mazeGrid);
+              for (let neighbor of neighbors) {
+                if (closedList.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                  continue; // Skip if the neighbor has already been evaluated
+                }
+          
+                const tentativeGScore = gScore[`${current.x},${current.y}`] + 1; // Assuming uniform cost
+          
+                if (!openList.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                  openList.push(neighbor);
+                } else if (tentativeGScore >= gScore[`${neighbor.x},${neighbor.y}`]) {
+                  continue; // Skip if the new path is not better
+                }
+          
+                // This path is the best until now, record it!
+                cameFrom[`${neighbor.x},${neighbor.y}`] = current;
+                gScore[`${neighbor.x},${neighbor.y}`] = tentativeGScore;
+                fScore[`${neighbor.x},${neighbor.y}`] = gScore[`${neighbor.x},${neighbor.y}`] + heuristic(neighbor, goal);
+              }
+            }
+          
+            // If no path found, return an empty array
+            return [];
+          }
+          
+          // Heuristic function (Manhattan distance)
+          function heuristic(a, b) {
+            return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+          }
+          
+          // Reconstruct the path from the cameFrom map
+          function reconstructPath(cameFrom, current) {
+            const path = [];
+            while (current) {
+              path.unshift(current);
+              current = cameFrom[`${current.x},${current.y}`];
+            }
+            return path;
+          }
+          
+          // Get neighboring nodes (up, down, left, right)
+          function getNeighbors(node, mazeGrid) {
+            const neighbors = [];
+            const directions = [
+              {x: 0, y: -1}, // Up
+              {x: 0, y: 1},  // Down
+              {x: -1, y: 0}, // Left
+              {x: 1, y: 0},  // Right
+            ];
+          
+            for (let direction of directions) {
+              const nx = node.x + direction.x;
+              const ny = node.y + direction.y;
+              if (isWalkable(nx, ny, mazeGrid)) {
+                neighbors.push({x: nx, y: ny});
+              }
+            }
+          
+            return neighbors;
+          }
+          
+          // Check if the tile is walkable (not a wall)
+          function isWalkable(x, y, mazeGrid) {
+            return mazeGrid[y] && mazeGrid[y][x] !== 1; // Assuming 1 is a wall
+          }
+          
+          // Get the direction to the next point in the path
+          function getDirectionToNextPoint(agentPosition, nextPoint) {
+            const dx = nextPoint.x - agentPosition.x;
+            const dy = nextPoint.y - agentPosition.y;
+          
+            if (Math.abs(dx) > Math.abs(dy)) {
+              return dx > 0 ? "move_right" : "move_left";
+            } else {
+              return dy > 0 ? "move_down" : "move_up";
+            }
+          }
+          </code></pre>
+          <p><strong>Advanced Concept:</strong> Fuzzy logic can be used in conjunction with other algorithms like A*
+            for pathfinding. While A* provides an optimal solution for pathfinding, fuzzy logic allows the agent to
+            adapt its movement in real-time based on dynamic changes in the environment, such as sudden obstacles or
+            changes in goal position. This combination enables more intelligent and flexible navigation.</p>
+        </div>
+      </div>
+
+      <!-- Modal for Snake -->
+      <div class="modal" id="snakeModal">
+        <div class="modal-content">
+          <span class="close-btn" onclick="closeModal()">&times;</span>
+          <h2>🐍 Snake: Fuzzy Logic Navigation</h2>
+          <p><strong>Goal:</strong> Eat food while avoiding walls or itself.</p>
+          <p><strong>Theory:</strong> Fuzzy logic enables Snake to decide when to go forward, turn, or avoid obstacles
+            based on food position and wall proximity.</p>
+          <p><strong>Fuzzy Rules:</strong></p>
+          <ul>
+            <li>IF food is ahead AND wall is Far → Go Forward</li>
+            <li>IF food is Close → Turn Left or Right</li>
+            <li>IF wall is Near → Avoid by Turning</li>
+            <li>IF food is to the Left AND wall is Far → Turn Left</li>
+            <li>IF food is to the Right AND wall is Far → Turn Right</li>
+            <li>IF food is directly ahead AND wall is Near → Turn Left or Right</li>
+          </ul>
+          <p><strong>Extended Theory:</strong></p>
+          <p>In this fuzzy logic system, the Snake makes decisions based on multiple factors such as the distance to
+            walls, the direction of the food, and the proximity of obstacles in different directions. The logic
+            allows for smooth and adaptive movements without relying on hard-coded behavior, ensuring more natural
+            decision-making.</p>
+          <p><strong>Detailed Behavior:</strong></p>
+          <ul>
+            <li><strong>Proximity to Walls:</strong> When the Snake detects that a wall is near (e.g., directly
+              ahead), it will choose to avoid it by turning left or right, depending on the available space.</li>
+            <li><strong>Food Position:</strong> If food is directly ahead, the Snake will move forward. If food is
+              close but not directly ahead, the Snake will consider turning left or right. If food is further
+              away, the Snake will follow a more general navigation strategy.</li>
+            <li><strong>Avoiding Self:</strong> If the Snake detects that moving in a specific direction could cause
+              it to collide with itself, the fuzzy logic will steer it to safer directions, often making a turn if
+              there’s enough room.</li>
+            <li><strong>Goal Seeking:</strong> The Snake's primary goal is to eat the food. The fuzzy logic
+              considers the best direction to move to get closer to the food while avoiding collisions with walls
+              or itself.</li>
+          </ul>
+          <p><strong>Practical Example:</strong></p>
+          <ul>
+            <li>If the food is in the top-left direction and the Snake is near the top-right wall, the fuzzy system
+              will analyze whether turning left or right is the best option to avoid a wall while still moving
+              toward the food.</li>
+            <li>If the food is directly ahead and there’s plenty of space in front, the Snake will continue moving
+              straight. But if the wall is too close, it will turn left or right to avoid a collision.</li>
+          </ul>
+          <pre><code>
+          // Fuzzy decision-making for Snake with enhanced behavior
+          function fuzzySnakeMove(foodX, foodY, wallFront, wallLeft, wallRight, snakeBody) {
+            // Avoid wall ahead
+            if (wallFront < 1) {
+              return (wallLeft > wallRight) ? "turn_left" : "turn_right";
+            }
+          
+            // Avoid colliding with itself (assuming snakeBody is an array of coordinates)
+            for (let i = 0; i < snakeBody.length; i++) {
+              const segment = snakeBody[i];
+              const dist = Math.abs(segment.x - foodX) + Math.abs(segment.y - foodY); // Manhattan Distance
+              if (dist < 1) {
+                // If the Snake's head is too close to its body, avoid the position
+                if (foodX < 0) {
+                  return "turn_left"; // turn left to avoid collision
+                } else {
+                  return "turn_right"; // turn right to avoid collision
+                }
+              }
+            }
+          
+            // Basic logic when food is ahead and there are no immediate obstacles
+            if (Math.abs(foodX) < 1 && foodY < 0) {
+              return "go_forward"; // Continue forward if food is directly ahead
+            } 
+          
+            // Decide the best direction based on food's position
+            if (foodX < 0) {
+              // Food is to the left, turn left if there's no wall
+              if (wallLeft > 0) {
+                return "turn_left"; 
+              } else {
+                return (wallFront > 0) ? "go_forward" : "turn_right";
+              }
+            } else if (foodX > 0) {
+              // Food is to the right, turn right if there's no wall
+              if (wallRight > 0) {
+                return "turn_right"; 
+              } else {
+                return (wallFront > 0) ? "go_forward" : "turn_left";
+              }
+            }
+          
+            // Additional rule to avoid corners and narrow passages
+            if (wallLeft < 1 && wallRight < 1) {
+              // If the Snake is in a corner, prioritize turning
+              return (Math.random() > 0.5) ? "turn_left" : "turn_right";
+            }
+          
+            // Default action: Go forward if no obstacles
+            return "go_forward"; 
+          }
+          
+          // Example usage of the Snake's body positions and fuzzy decision
+          const snakeBody = [
+            { x: 5, y: 5 },
+            { x: 6, y: 5 },
+            { x: 7, y: 5 }
+          ]; 
+          
+          const foodX = 8;
+          const foodY = 5;
+          const wallFront = 1; // Distance to the front wall
+          const wallLeft = 3;  // Distance to the left wall
+          const wallRight = 2; // Distance to the right wall
+          
+          const move = fuzzySnakeMove(foodX, foodY, wallFront, wallLeft, wallRight, snakeBody);
+          console.log("Next Move:", move);
+          </code></pre>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = "flex";
+    }
+
+    // Close Modal
+    function closeModal() {
+      document.querySelectorAll(".modal").forEach(modal => modal.style.display = "none");
+    }
+
+    // Close modal on outside click
+    window.onclick = function (e) {
+      const modal = document.getElementById("pacmanModal");
+      if (e.target == modal) modal.style.display = "none";
+    }
+  </script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+</body>
+
+</html>
