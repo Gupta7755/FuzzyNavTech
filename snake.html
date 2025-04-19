@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FuzzyWanderer Snake</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: #000;
+    }
+
+    body {
+      background: radial-gradient(#333, #111);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      color: #fff;
+      font: 100%/1.5 sans-serif;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Score Display */
+    .score {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+      font-weight: bold;
+      padding-top: 5px;
+      text-align: center;
+    }
+
+    /* Stage (Game Board) */
+    .stage {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      z-index: 2;
+
+      /* Optional grid layout if JS appends .tile elements in a grid */
+      display: grid;
+      grid-template-columns: repeat(20, 20px); /* Change 20 based on your game board size */
+      grid-template-rows: repeat(20, 20px);
+      gap: 2px;
+    }
+
+    /* Tiles */
+    .tile {
+      width: 20px;
+      height: 20px;
+      background: rgba(0, 0, 0, 0.15);
+      position: relative;
+      transition-property: background, box-shadow, opacity, transform;
+      transform: translateZ(0);
+      transition-duration: 3000ms;
+    }
+
+    .tile:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      transition: opacity 300ms;
+    }
+
+    .tile.path:before {
+      opacity: 1;
+    }
+
+    .tile.up:before {
+      border-bottom: 4px inset rgba(255, 255, 255, 0.15);
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+    }
+
+    .tile.down:before {
+      border-top: 4px inset rgba(255, 255, 255, 0.15);
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+    }
+
+    .tile.left:before {
+      border-right: 4px inset rgba(255, 255, 255, 0.15);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+
+    .tile.right:before {
+      border-left: 4px inset rgba(255, 255, 255, 0.15);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+
+    @media (max-width: 900px), (max-height: 900px) {
+      .tile.up:before,
+      .tile.down:before,
+      .tile.left:before,
+      .tile.right:before {
+        border-width: 3px;
+      }
+    }
+
+    @media (max-width: 500px), (max-height: 500px) {
+      .tile.up:before,
+      .tile.down:before,
+      .tile.left:before,
+      .tile.right:before {
+        border-width: 2px;
+      }
+    }
+
+    .tile.pressed {
+      background: rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+      transition-duration: 0ms;
+    }
+  </style>
+</head>
+<body>
+  <div class="score">0</div>
+  <div class="stage"></div>
+
+  <!-- Your game logic here -->
+  <script src="snake.js"></script>
+</body>
+</html>
